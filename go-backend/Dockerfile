@@ -2,13 +2,14 @@ FROM golang:1.24-alpine
 
 WORKDIR /app
 
+RUN go install github.com/DataDog/orchestrion@latest
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /rum-video-streaming-backend
+RUN CGO_ENABLED=0 GOOS=linux orchestrion go build -o /rum-video-streaming-backend
 
 EXPOSE 3000
 
