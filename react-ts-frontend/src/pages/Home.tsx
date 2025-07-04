@@ -1,6 +1,7 @@
 import type { User } from "@/types/User";
 import type { Video } from "@/types/Video";
-import { Button, Flex, Table } from "@chakra-ui/react";
+import { BACKEND_BASE_URL } from "@/utils/api";
+import { Table } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
@@ -9,13 +10,13 @@ const Home = () => {
   let navigate = useNavigate();
   const [user, setUser] = useState<User>({} as User);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [value, removeValue] = useLocalStorage<User>(
+  const [value] = useLocalStorage<User>(
     "rum-vide-streaming--user",
     {} as User
   );
 
   const fetchVideos = async (): Promise<Video[]> => {
-    const response = await fetch("http://localhost:3000/videos");
+    const response = await fetch(`${BACKEND_BASE_URL}/videos`);
     const json = await response.json();
     return json["data"];
   };

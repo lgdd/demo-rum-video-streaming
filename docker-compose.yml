@@ -1,0 +1,16 @@
+services:
+  rum-video-streaming-backend:
+    build:
+      context: go-backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - MUX_TOKEN_ID=${MUX_TOKEN_ID}
+      - MUX_TOKEN_SECRET=${MUX_TOKEN_SECRET}
+  rum-video-streaming-frontend:
+    build:
+      context: react-ts-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"net/http"
 	"os"
 
@@ -24,16 +23,15 @@ type JSONResponse struct {
 }
 
 func main() {
-	err := godotenv.Load()
+	godotenv.Load()
 
-	if err != nil {
-		log.Fatal("error loading .env file")
-	}
+	tokenId := os.Getenv("MUX_TOKEN_ID")
+	tokenSecret := os.Getenv("MUX_TOKEN_SECRET")
 
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173",
+		AllowOrigins: "http://localhost:5173, http://localhost:8000",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
@@ -62,9 +60,6 @@ func main() {
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 		}
-
-		tokenId := os.Getenv("MUX_TOKEN_ID")
-		tokenSecret := os.Getenv("MUX_TOKEN_SECRET")
 
 		req.SetBasicAuth(tokenId, tokenSecret)
 

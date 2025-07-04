@@ -4,6 +4,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_BASE_URL } from "@/utils/api";
 
 interface LoginFormValues {
   username: string;
@@ -17,13 +18,13 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
-  const [value, setValue, removeValue] = useLocalStorage<User>(
+  const [value, setValue] = useLocalStorage<User>(
     "rum-vide-streaming--user",
     {} as User
   );
 
   const handleLogin = async (username: string): Promise<User> => {
-    const response = await fetch("http://localhost:3000/login", {
+    const response = await fetch(`${BACKEND_BASE_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: username }),
