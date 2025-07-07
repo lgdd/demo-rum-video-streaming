@@ -1,12 +1,18 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 
+	log "github.com/sirupsen/logrus"
+
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
 	"github.com/joho/godotenv"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +29,7 @@ type JSONResponse struct {
 }
 
 func main() {
+	log.SetFormatter(&log.JSONFormatter{})
 	godotenv.Load()
 
 	tokenId := os.Getenv("MUX_TOKEN_ID")
@@ -36,13 +43,18 @@ func main() {
 	}))
 
 	app.Post("/login", func(c *fiber.Ctx) error {
+		ctx := c.Context()
+		span, spanFound := tracer.SpanFromContext(ctx)
+
 		user := new(User)
 
 		if err := c.BodyParser(user); err != nil {
 			return err
 		}
 
-		userId, err := getUserId(user.Username)
+		log.WithContext(ctx).Info(fmt.Sprintf("%s is trying to log in", user.Username))
+
+		userId, err := getUserId(ctx, user.Username)
 
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).SendString(err.Error())
@@ -50,10 +62,23 @@ func main() {
 
 		user.UserID = userId
 
+		if spanFound {
+			tracer.SetUser(
+				span,
+				strconv.Itoa(user.UserID),
+				tracer.WithUserLogin(user.Username),
+			)
+		}
+
+		log.WithContext(ctx).Info(fmt.Sprintf("%s logged in successfully", user.Username))
+
 		return c.JSON(user)
 	})
 
 	app.Get("/videos", func(c *fiber.Ctx) error {
+		ctx := c.Context()
+		log.WithContext(ctx).Info("Fetching video list from Mux")
+
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", "https://api.mux.com/video/v1/assets", nil)
 
@@ -85,9 +110,11 @@ func main() {
 	app.Listen(":3000")
 }
 
-func getUserId(username string) (int, error) {
+func getUserId(ctx context.Context, username string) (int, error) {
 	if username == "" {
-		return 0, errors.New("username should not be empty")
+		errMsg := "username should not be empty"
+		log.WithContext(ctx).Error(errMsg)
+		return 0, errors.New(errMsg)
 	}
 
 	usernameLength := len(username)
