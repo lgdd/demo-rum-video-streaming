@@ -1,6 +1,8 @@
 import { ColorModeButton } from "@/components/ui/color-mode";
 import type { User } from "@/types/User";
 import { Button, Container, Flex, Heading } from "@chakra-ui/react";
+import { datadogLogs } from "@datadog/browser-logs";
+import { datadogRum } from "@datadog/browser-rum";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
@@ -31,6 +33,12 @@ const Layout = () => {
             type="button"
             colorPalette={"red"}
             onClick={() => {
+              datadogLogs.logger.info("User logged out", {
+                userId: value.userId,
+                username: value.username,
+              });
+              datadogRum.clearUser();
+              datadogRum.stopSession();
               setValue({} as User);
               navigate("/");
             }}

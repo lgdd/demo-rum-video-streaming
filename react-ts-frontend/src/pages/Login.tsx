@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "@/utils/api";
+import { datadogLogs } from "@datadog/browser-logs";
+import { datadogRum } from "@datadog/browser-rum";
 
 interface LoginFormValues {
   username: string;
@@ -23,6 +25,14 @@ const Login = () => {
     {} as User
   );
 
+  const setDatadogRumUser = (user: User) => {
+    datadogRum.setUser({
+      id: `${user.userId}`,
+      name: user.username,
+      plan: "premium",
+    });
+  };
+
   const handleLogin = async (username: string): Promise<User> => {
     const response = await fetch(`${BACKEND_BASE_URL}/login`, {
       method: "POST",
@@ -36,6 +46,7 @@ const Login = () => {
   const onSubmit = handleSubmit((data) => {
     handleLogin(data.username).then((user) => {
       reset();
+      setDatadogRumUser(user);
       setValue(user);
       navigate("/home");
     });
@@ -43,6 +54,11 @@ const Login = () => {
 
   useEffect(() => {
     if (Object.keys(value).length > 0) {
+      datadogLogs.logger.info("Redirect  already logged in user", {
+        username: value.username,
+        userId: `${value.userId}`,
+      });
+      setDatadogRumUser(value);
       navigate("/home");
     }
   }, []);

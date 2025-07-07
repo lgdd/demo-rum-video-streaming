@@ -7,6 +7,7 @@ import Streaming from "@/pages/Streaming";
 import { datadogRum } from "@datadog/browser-rum";
 import { ErrorBoundary, reactPlugin } from "@datadog/browser-rum-react";
 import { Routes } from "@datadog/browser-rum-react/react-router-v7";
+import { datadogLogs } from "@datadog/browser-logs";
 
 import type { Fallback } from "@datadog/browser-rum-react/cjs/domain/error/errorBoundary";
 
@@ -34,6 +35,17 @@ if (import.meta.env.VITE_APP_ENV === "prod") {
     trackUserInteractions: true,
     enablePrivacyForActionName: true,
     plugins: [reactPlugin({ router: true })],
+  });
+
+  datadogLogs.init({
+    clientToken: clientToken,
+    site: "datadoghq.com",
+    service: "rum-video-streaming-frontend",
+    env: "prod",
+    version: "1.0.0",
+    forwardConsoleLogs: "all",
+    forwardErrorsToLogs: true,
+    sessionSampleRate: 100,
   });
 }
 

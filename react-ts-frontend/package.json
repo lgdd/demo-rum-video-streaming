@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.21.1",
+    "@datadog/browser-logs": "^6.13.0",
     "@datadog/browser-rum": "^6.13.0",
     "@datadog/browser-rum-react": "^6.13.0",
     "@emotion/react": "^11.14.0",

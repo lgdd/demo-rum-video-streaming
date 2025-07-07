@@ -2,7 +2,7 @@ import type { User } from "@/types/User";
 import type { Video } from "@/types/Video";
 import { BACKEND_BASE_URL } from "@/utils/api";
 import { Table } from "@chakra-ui/react";
-import { datadogRum } from "@datadog/browser-rum";
+import { datadogLogs } from "@datadog/browser-logs";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
@@ -21,15 +21,16 @@ const Home = () => {
 
   useEffect(() => {
     if (Object.keys(value).length === 0) {
+      datadogLogs.logger.info("Redirect non-logged user");
       navigate("/");
     } else {
-      datadogRum.setUser({
-        id: `${value.userId}`,
-        username: value.username,
-        plan: "premium",
-      });
       setUser(value);
-      fetchVideos().then((videos) => setVideos(videos));
+      fetchVideos().then((videos) => {
+        setVideos(videos);
+        datadogLogs.logger.info(`Videos fetched for user ${value.username}`, {
+          videos: videos,
+        });
+      });
     }
   }, []);
 

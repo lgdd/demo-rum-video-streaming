@@ -11,9 +11,12 @@ importers:
       '@chakra-ui/react':
         specifier: ^3.21.1
         version: 3.21.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@datadog/browser-logs':
+        specifier: ^6.13.0
+        version: 6.13.0(@datadog/browser-rum@6.13.0)
       '@datadog/browser-rum':
         specifier: ^6.13.0
-        version: 6.13.0
+        version: 6.13.0(@datadog/browser-logs@6.13.0)
       '@datadog/browser-rum-react':
         specifier: ^6.13.0
         version: 6.13.0(@datadog/browser-rum@6.13.0)(react-router-dom@7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
@@ -193,6 +196,14 @@ packages:
 
   '@datadog/browser-core@6.13.0':
     resolution: {integrity: sha512-wWhQ22F8pDjh7kGtvBetJhX5luyKsIVzJQTisjM/6p+A2nchDuoOiZ0GdjajRA5LlPa9pj/PlOoe/g+B9AMELg==}
+
+  '@datadog/browser-logs@6.13.0':
+    resolution: {integrity: sha512-P8GCuPOzvfMWFxFzx8xu/i1lD+IoeH0kh+XKeg+s2Axhn/Q4h+SZf2zGSCUU2gKMkdBIfF3tGm9kKncQrYjq1Q==}
+    peerDependencies:
+      '@datadog/browser-rum': 6.13.0
+    peerDependenciesMeta:
+      '@datadog/browser-rum':
+        optional: true
 
   '@datadog/browser-rum-core@6.13.0':
     resolution: {integrity: sha512-+gp9MEDc24xB5dwvVYsOPoRueujTOy0GNW2Q3XNyWMstzuSQIwXaIuDIRVhCoi8+i4UioUCd7ZO30yEB01Ajwg==}
@@ -2158,6 +2169,12 @@ snapshots:
 
   '@datadog/browser-core@6.13.0': {}
 
+  '@datadog/browser-logs@6.13.0(@datadog/browser-rum@6.13.0)':
+    dependencies:
+      '@datadog/browser-core': 6.13.0
+    optionalDependencies:
+      '@datadog/browser-rum': 6.13.0(@datadog/browser-logs@6.13.0)
+
   '@datadog/browser-rum-core@6.13.0':
     dependencies:
       '@datadog/browser-core': 6.13.0
@@ -2167,14 +2184,16 @@ snapshots:
       '@datadog/browser-core': 6.13.0
       '@datadog/browser-rum-core': 6.13.0
     optionalDependencies:
-      '@datadog/browser-rum': 6.13.0
+      '@datadog/browser-rum': 6.13.0(@datadog/browser-logs@6.13.0)
       react: 19.1.0
       react-router-dom: 7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  '@datadog/browser-rum@6.13.0':
+  '@datadog/browser-rum@6.13.0(@datadog/browser-logs@6.13.0)':
     dependencies:
       '@datadog/browser-core': 6.13.0
       '@datadog/browser-rum-core': 6.13.0
+    optionalDependencies:
+      '@datadog/browser-logs': 6.13.0(@datadog/browser-rum@6.13.0)
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
