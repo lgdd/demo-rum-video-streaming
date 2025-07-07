@@ -1,6 +1,6 @@
 # Demo RUM Video Streaming
 
-This repository contains a demo environment to explore Datadog's Real User Monitoring (RUM) with logs and traces correlation.
+This repository contains a demo of a video streaming application to explore Datadog's Real User Monitoring (RUM) with logs and traces correlation.
 
 ## Application Stack
 
