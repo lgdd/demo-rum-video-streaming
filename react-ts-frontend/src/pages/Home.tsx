@@ -2,6 +2,7 @@ import type { User } from "@/types/User";
 import type { Video } from "@/types/Video";
 import { BACKEND_BASE_URL } from "@/utils/api";
 import { Table } from "@chakra-ui/react";
+import { datadogRum } from "@datadog/browser-rum";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
@@ -10,10 +11,7 @@ const Home = () => {
   let navigate = useNavigate();
   const [user, setUser] = useState<User>({} as User);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [value] = useLocalStorage<User>(
-    "rum-vide-streaming--user",
-    {} as User
-  );
+  const [value] = useLocalStorage<User>("rum-vide-streaming--user", {} as User);
 
   const fetchVideos = async (): Promise<Video[]> => {
     const response = await fetch(`${BACKEND_BASE_URL}/videos`);
@@ -25,6 +23,11 @@ const Home = () => {
     if (Object.keys(value).length === 0) {
       navigate("/");
     } else {
+      datadogRum.setUser({
+        id: `${value.userId}`,
+        username: value.username,
+        plan: "premium",
+      });
       setUser(value);
       fetchVideos().then((videos) => setVideos(videos));
     }
