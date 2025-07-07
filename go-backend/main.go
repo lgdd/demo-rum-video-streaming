@@ -39,7 +39,7 @@ func main() {
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:5173, http://localhost:8000",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "*",
 	}))
 
 	app.Post("/login", func(c *fiber.Ctx) error {
@@ -111,10 +111,22 @@ func main() {
 }
 
 func getUserId(ctx context.Context, username string) (int, error) {
+	parenSpan, parentSpanFound := tracer.SpanFromContext(ctx)
+	span := &tracer.Span{}
+
+	if parentSpanFound {
+		span = parenSpan.StartChild("getUserId")
+		defer span.Finish()
+	}
+
 	if username == "" {
 		errMsg := "username should not be empty"
+		err := errors.New(errMsg)
+		if parentSpanFound {
+			span.Finish(tracer.WithError(err))
+		}
 		log.WithContext(ctx).Error(errMsg)
-		return 0, errors.New(errMsg)
+		return 0, err
 	}
 
 	usernameLength := len(username)
@@ -122,6 +134,10 @@ func getUserId(ctx context.Context, username string) (int, error) {
 
 	for i := range usernameLength {
 		userId += int(username[i])
+	}
+
+	if parentSpanFound {
+		span.SetTag("userId", strconv.Itoa(userId))
 	}
 
 	return userId, nil
