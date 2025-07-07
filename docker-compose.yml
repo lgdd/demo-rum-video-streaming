@@ -10,6 +10,7 @@ services:
       - DD_ENV=prod
       - DD_SERVICE=rum-video-streaming-backend
       - DD_VERSION=1.0.0
+      - DD_PROFILING_ENABLED=true
       - MUX_TOKEN_ID=${MUX_TOKEN_ID}
       - MUX_TOKEN_SECRET=${MUX_TOKEN_SECRET}
     labels:
@@ -43,6 +44,7 @@ services:
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
       - DD_CONTAINER_EXCLUDE=image:agent
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
