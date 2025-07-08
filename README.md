@@ -32,7 +32,7 @@ If the build goes fine, you can run `docker compose up -d` and go to http://loca
 
 ### /login
 
-You will find a fake login page where you can use any username. It will generate a user ID by doing a sum of the ASCII code decimals of each character in the username and adding the length of the username (e.g. `lgd = 108 + 103 + 100 + 3 = 314`). The user ID is then used for telemetry data sent to Datadog.
+You will find a fake login page where you can use any username. It will generate a user ID using the md5 hash of the username. The user ID is then used for telemetry data sent to Datadog (e.g. logs, traces or RUM sessions).
 
 ### /home
 
