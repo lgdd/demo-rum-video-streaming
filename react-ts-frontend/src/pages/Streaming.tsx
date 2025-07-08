@@ -6,10 +6,13 @@ import { datadogLogs } from "@datadog/browser-logs";
 import { datadogRum } from "@datadog/browser-rum";
 import { useLocalStorage } from "usehooks-ts";
 import type { User } from "@/types/User";
+import { useState } from "react";
 
 const Streaming = () => {
   const params = useParams();
   const [value] = useLocalStorage<User>("rum-vide-streaming--user", {} as User);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const updateIntervalInMilliseconds: number = 1 * 60 * 1000;
 
   const muxMetadata = {
     video_id: params.id,
@@ -25,6 +28,24 @@ const Streaming = () => {
     datadogRum.addAction("play", muxMetadata);
   };
 
+  const onTimeUpdate = () => {
+    if (lastUpdate === null) {
+      setLastUpdate(new Date());
+    } else {
+      const currentDate: Date = new Date();
+      const timeDifference: number =
+        currentDate.getTime() - lastUpdate.getTime();
+      if (timeDifference >= updateIntervalInMilliseconds) {
+        datadogLogs.logger.debug(
+          `${value.username} is still watching '${params.title}'`,
+          muxMetadata
+        );
+        datadogRum.addAction("watching", muxMetadata);
+        setLastUpdate(new Date());
+      }
+    }
+  };
+
   const onPause = () => {
     datadogLogs.logger.info(
       `${value.username} has paused video '${params.title}'`,
@@ -32,7 +53,7 @@ const Streaming = () => {
     );
     datadogRum.addAction("pause", muxMetadata);
   };
-  
+
   const onEnded = () => {
     datadogLogs.logger.info(
       `Video ${params.title} has ended for ${value.username}`,
@@ -60,6 +81,7 @@ const Streaming = () => {
         onPlay={onPlay}
         onPause={onPause}
         onEnded={onEnded}
+        onTimeUpdate={onTimeUpdate}
       />
     </>
   );
