@@ -11,7 +11,7 @@ const Layout = () => {
   let navigate = useNavigate();
   const [user, setUser] = useState<User>({} as User);
   const [value, setValue] = useLocalStorage<User>(
-    "rum-vide-streaming--user",
+    "rum-video-streaming--user",
     {} as User
   );
 

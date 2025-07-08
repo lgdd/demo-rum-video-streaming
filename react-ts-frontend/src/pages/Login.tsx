@@ -21,7 +21,7 @@ const Login = () => {
     formState: { errors },
   } = useForm<LoginFormValues>();
   const [value, setValue] = useLocalStorage<User>(
-    "rum-vide-streaming--user",
+    "rum-video-streaming--user",
     {} as User
   );
 

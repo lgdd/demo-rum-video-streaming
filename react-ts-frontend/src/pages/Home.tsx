@@ -11,7 +11,7 @@ const Home = () => {
   let navigate = useNavigate();
   const [user, setUser] = useState<User>({} as User);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [value] = useLocalStorage<User>("rum-vide-streaming--user", {} as User);
+  const [value] = useLocalStorage<User>("rum-video-streaming--user", {} as User);
 
   const fetchVideos = async (): Promise<Video[]> => {
     const response = await fetch(`${BACKEND_BASE_URL}/videos`);

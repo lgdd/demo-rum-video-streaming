@@ -10,7 +10,7 @@ import { useState } from "react";
 
 const Streaming = () => {
   const params = useParams();
-  const [value] = useLocalStorage<User>("rum-vide-streaming--user", {} as User);
+  const [value] = useLocalStorage<User>("rum-video-streaming--user", {} as User);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const updateIntervalInMilliseconds: number = 1 * 60 * 1000;
 
