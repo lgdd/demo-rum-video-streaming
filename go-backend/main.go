@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 
 	log "github.com/sirupsen/logrus"
 
@@ -21,7 +22,7 @@ import (
 
 type User struct {
 	Username string `json:"username"`
-	UserID   int    `json:"userId"`
+	UserID   string `json:"userId"`
 }
 
 type JSONResponse struct {
@@ -65,7 +66,7 @@ func main() {
 		if spanFound {
 			tracer.SetUser(
 				span,
-				strconv.Itoa(user.UserID),
+				user.UserID,
 				tracer.WithUserLogin(user.Username),
 			)
 		}
@@ -110,7 +111,7 @@ func main() {
 	app.Listen(":3000")
 }
 
-func getUserId(ctx context.Context, username string) (int, error) {
+func getUserId(ctx context.Context, username string) (string, error) {
 	parenSpan, parentSpanFound := tracer.SpanFromContext(ctx)
 	span := &tracer.Span{}
 
@@ -126,18 +127,14 @@ func getUserId(ctx context.Context, username string) (int, error) {
 			span.Finish(tracer.WithError(err))
 		}
 		log.WithContext(ctx).Error(errMsg)
-		return 0, err
+		return "", err
 	}
 
-	usernameLength := len(username)
-	userId := usernameLength
-
-	for i := range usernameLength {
-		userId += int(username[i])
-	}
+	usernameHash := md5.Sum([]byte(username))
+	userId := hex.EncodeToString(usernameHash[:])
 
 	if parentSpanFound {
-		span.SetTag("userId", strconv.Itoa(userId))
+		span.SetTag("userId", userId)
 	}
 
 	return userId, nil
