@@ -20,7 +20,7 @@ if (import.meta.env.VITE_APP_ENV === "prod") {
     clientToken: clientToken,
     site: "datadoghq.com",
     service: "rum-video-streaming-frontend",
-    env: "prod",
+    env: "demo",
     version: "1.0.0",
     defaultPrivacyLevel: "mask-user-input",
     allowedTracingUrls: [
@@ -41,7 +41,7 @@ if (import.meta.env.VITE_APP_ENV === "prod") {
     clientToken: clientToken,
     site: "datadoghq.com",
     service: "rum-video-streaming-frontend",
-    env: "prod",
+    env: "demo",
     version: "1.0.0",
     forwardConsoleLogs: "all",
     forwardErrorsToLogs: true,
