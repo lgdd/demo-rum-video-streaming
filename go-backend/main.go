@@ -39,7 +39,7 @@ func main() {
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173, http://localhost:8000",
+		AllowOrigins: os.Getenv("RUM_VIDEO_STREAMING_CORS_ALLOW_ORIGINS"),
 		AllowHeaders: "*",
 	}))
 
